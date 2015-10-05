@@ -21,8 +21,6 @@ define ebs::volume (
     default => inline_template("<%= '/dev/xvd' << @device[-1] %>")
   }
 
-  notify { "device attached = $device_attached": }
-
   exec { "EBS volume ${name}: obtaining the volume id":
     command     => "aws ec2 describe-volumes --filters Name='tag:name',Values=${name} --query 'Volumes[*].{ID:VolumeId, State:State}' | grep 'ID' | cut -d':' -f 2 | tr -d ' \"' > ${volume_id_file}",
     unless      => "test -s ${volume_id_file}",
