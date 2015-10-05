@@ -1,4 +1,4 @@
-# ecryptfs
+# ebs
 
 #### Table of Contents
 
