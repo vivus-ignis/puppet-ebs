@@ -1,0 +1,7 @@
+.librarian
+.tmp
+.vagrant
+/modules
+pkg/
+.exports
+.volume_id

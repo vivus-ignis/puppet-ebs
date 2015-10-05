@@ -1,0 +1,15 @@
+{
+  "name": "ignis-ebs",
+  "version": "0.1.0",
+  "author": "Iaroslav Tarasenko",
+  "summary": "Attach and partition EBS volumes",
+  "license": "MIT",
+  "source": "https://github.com/vivus-ignis/puppet-ebs",
+  "project_page": null,
+  "issues_url": "https://github.com/vivus-ignis/puppet-ebs/issues",
+  "dependencies": [
+    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"},
+    {"name":"ignis-awscli_bundled","version_requirement":">= 0.1.0"}
+  ]
+}
+
