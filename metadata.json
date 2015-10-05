@@ -1,6 +1,6 @@
 {
   "name": "ignis-ebs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Iaroslav Tarasenko",
   "summary": "Attach and partition EBS volumes",
   "license": "MIT",
