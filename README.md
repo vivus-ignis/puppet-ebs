@@ -70,7 +70,7 @@ you have to assign a proper IAM role to an ec2 instance you're running this code
 Example policy (tune Resource parameter to your liking):
 
 ```json
-
+{
     "Version": "2012-10-17",
     "Statement": [
         {
