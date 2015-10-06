@@ -34,12 +34,14 @@ define ebs::volume (
   exec { "EBS volume ${name}: attaching the volume":
     command     => "aws ec2 attach-volume --volume-id=`cat ${volume_id_file}` --instance-id $ec2_instance_id --device $device",
     environment => "AWS_DEFAULT_REGION=${aws_region}",
-    unless      => "test -b ${device_attached}"
+    unless      => "test -b ${device_attached}",
   } ->
 
   exec { "EBS volume ${name}: formatting the volume":
-    command => "mkfs.${format} ${format_options} ${device_attached}",
-    unless  => "lsblk -fn | grep `basename ${device_attached}` | grep ${format}",
+    command   => "mkfs.${format} ${format_options} ${device_attached}",
+    unless    => "lsblk -fn | grep `basename ${device_attached}` | grep ${format}",
+    tries     => 6,
+    try_sleep => 10
   } ->
 
   exec { "EBS volume ${name}: creating the mount directory":

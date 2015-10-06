@@ -1,7 +1,7 @@
 FORGE
   remote: https://forgeapi.puppetlabs.com
   specs:
-    ignis-awscli_bundled (0.1.0)
+    ignis-awscli_bundled (0.1.2)
       maestrodev-wget (>= 1.7.1)
     maestrodev-wget (1.7.1)
     puppetlabs-stdlib (4.9.0)

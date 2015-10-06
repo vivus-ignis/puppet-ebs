@@ -20,12 +20,13 @@ volume: .volume_id
 
 clean: cleanebs
 	. .exports && vagrant destroy -f
+	rm -f .volume_id
 
 cleanebs:
 	-vagrant ssh -c 'sudo umount /mnt/ebs_vagrant_test'
-	-. .exports && aws ec2 detach-volume --volume-id `cat .volume_id`
-	. .exports && aws ec2 delete-volume --volume-id `cat .volume_id` && \
-	  rm -f .volume_id
+	. .exports && aws ec2 detach-volume --volume-id `cat .volume_id`
+	sleep 60
+	. .exports && aws ec2 delete-volume --volume-id `cat .volume_id`
 
 installdeps:
 	mkdir -p modules
