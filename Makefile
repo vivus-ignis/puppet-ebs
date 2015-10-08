@@ -1,6 +1,6 @@
 default:
 	bundle exec rake validate
-	vagrant provision
+	. .exports && vagrant provision
 
 install: volume instance
 

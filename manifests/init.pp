@@ -6,7 +6,9 @@ class ebs (
     require awscli_bundled
   }
 
-  package { $util_linux_package:
-    ensure => present
+  if ! defined(Package[$util_linux_package]) {
+    package { $util_linux_package:
+      ensure => present
+    }
   }
 }
