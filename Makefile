@@ -8,7 +8,7 @@ instance:
 	. .exports && vagrant up
 
 volume: .volume_id
-	aws ec2 create-tags --resources `cat .volume_id` \
+	. .exports && aws ec2 create-tags --resources `cat .volume_id` \
 	  --tags Key=name,Value=vagrant_test
 
 .volume_id:

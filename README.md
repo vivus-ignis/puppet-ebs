@@ -63,6 +63,10 @@ ebs::volume { 'jenkins':             # so we look for an EBS volume that has nam
 `mount_dir` directory will be created if it doesn't exist (so manage it
 outside of this module to ensure custom owner/group/mode parameters).
 
+Also, please be very careful with `format` option: if a volume was already formatted with,
+say, 'ext4' and you set this parameter to something else ( ext3 ) -- a volume will
+be reformatted and you will lose your data.
+
 ## Limitations
 
 This module was tested on CentOS 6.x so far. For the AWS API authorization to work,
