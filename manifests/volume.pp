@@ -17,8 +17,12 @@ define ebs::volume (
   $volume_id_file = "/var/lib/puppet/.ebs__${name}__volume_id"
   $aws_region = inline_template("<%= @ec2_placement_availability_zone.gsub(/.$/,'') %>")
 
-  $device_attached = $::osfamily? {
-    default => inline_template("<%= '/dev/xvd' << @device[-1] %>")
+  $_root_offset_device = inline_template("<%= @blockdevices.split(',').sort.first.gsub(/[0-9]/,'')[-1].ord %>")
+  $_offset_device = inline_template("<%= @device[-1].ord - 'a'[0].ord %>")
+  $_letter_xen_bd = inline_template("<%= (@_root_offset_device.to_i + @_offset_device.to_i).chr %>")
+
+  $device_attached = $::operatingsystem? {
+    default => inline_template("<%= '/dev/xvd' << @_letter_xen_bd %>")
   }
 
   exec { "EBS volume ${name}: obtaining the volume id":

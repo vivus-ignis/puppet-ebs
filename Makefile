@@ -23,7 +23,7 @@ clean: cleanebs
 	rm -f .volume_id
 
 cleanebs:
-	-vagrant ssh -c 'sudo umount /mnt/ebs_vagrant_test'
+	-. .exports && vagrant ssh -c 'sudo umount /mnt/ebs_vagrant_test'
 	. .exports && aws ec2 detach-volume --volume-id `cat .volume_id`
 	sleep 60
 	. .exports && aws ec2 delete-volume --volume-id `cat .volume_id`
