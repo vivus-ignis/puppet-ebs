@@ -41,11 +41,15 @@ define ebs::volume (
     unless      => "test -b ${device_attached}",
   } ->
 
-  exec { "EBS volume ${name}: formatting the volume":
-    command   => "mkfs.${format} ${format_options} ${device_attached}",
-    unless    => "lsblk -fn | grep `basename ${device_attached}` | grep ${format}",
+  exec { "EBS volume ${name}: waiting for the volume to be attached":
+    command   => "test -b ${device_attached}",
     tries     => 6,
     try_sleep => 10
+  } ->
+
+  exec { "EBS volume ${name}: formatting the volume":
+    command => "mkfs.${format} ${format_options} ${device_attached}",
+    unless  => "lsblk -fn | awk -v device=`basename ${device_attached} '{if (\$1 == device) print \$2}' | grep -q ${format}"
   } ->
 
   exec { "EBS volume ${name}: creating the mount directory":
