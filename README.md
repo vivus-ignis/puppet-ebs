@@ -92,3 +92,12 @@ Example policy (tune Resource parameter to your liking):
 }
 ```
 
+*!!ATTENTION!!* I've discovered a bug on my CentOS 6.x system: when you format a volume
+as an ext4 filesystem, it appears to lsblk as ext3 on a next volume attachment. This
+causes puppet to FORMAT an already formetted partition (as it thinks that the configuration
+is wrong -- we want an 'ext4' from it but it sees 'ext3').
+
+For the time being, 'ext3' will be set as the default filesystem parameter to avoid
+hitting this bug accidentally. At the same time, I encourage you to test your ebs::volume
+resources on test machines with subsequent re-attaches (e.g. by terminating an instance and
+reusing the volume on another one) BEFORE going to production.
