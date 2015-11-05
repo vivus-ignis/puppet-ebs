@@ -92,7 +92,8 @@ Example policy (tune Resource parameter to your liking):
 }
 ```
 
-*!!ATTENTION!!* I've discovered a bug on my CentOS 6.x system: when you format a volume
+## Bugs
+I've discovered a bug on my CentOS 6.x system: when you format a volume
 as an ext4 filesystem, it appears to lsblk as ext3 on a next volume attachment. This
 causes puppet to FORMAT an already formetted partition (as it thinks that the configuration
 is wrong -- we want an 'ext4' from it but it sees 'ext3').

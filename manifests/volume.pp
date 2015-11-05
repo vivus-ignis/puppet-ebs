@@ -1,6 +1,6 @@
 define ebs::volume (
   $device         = '/dev/sdb',
-  $format         = 'ext4',
+  $format         = 'ext3',
   $format_options = undef,
   $mount_options  = 'noatime',
   $mount_dir      = '/mnt'
