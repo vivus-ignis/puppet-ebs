@@ -47,6 +47,8 @@ define ebs::volume (
     try_sleep => 10
   } ->
 
+  notify { "format = ${format}": } ->
+
   exec { "EBS volume ${name}: formatting the volume":
     command => "mkfs.${format} ${format_options} ${device_attached}",
     unless  => "lsblk -fn | awk -v device=`basename ${device_attached}` '{if (\$1 == device) print \$2}' | grep -q ${format}"
