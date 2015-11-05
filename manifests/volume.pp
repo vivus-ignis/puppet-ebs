@@ -42,16 +42,16 @@ define ebs::volume (
   } ->
 
   exec { "EBS volume ${name}: waiting for the volume to be attached":
-    command   => "test -b ${device_attached}",
+    command   => "lsblk -fn ${device_attached}",
     tries     => 6,
-    try_sleep => 10
+    try_sleep => 10,
+    logoutput => true
   } ->
 
-  notify { "format = ${format}": } ->
-
   exec { "EBS volume ${name}: formatting the volume":
-    command => "mkfs.${format} ${format_options} ${device_attached}",
-    unless  => "lsblk -fn | awk -v device=`basename ${device_attached}` '{if (\$1 == device) print \$2}' | grep -q ${format}"
+    command   => "mkfs.${format} ${format_options} ${device_attached}",
+    unless    => "lsblk -fn ${device_attached} | grep -q ' ${format} '",
+    logoutput => true
   } ->
 
   exec { "EBS volume ${name}: creating the mount directory":
