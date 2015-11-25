@@ -51,12 +51,13 @@ aws ec2 create-tags --resources `cat .volume_id` \
 And then in your puppet code you can create resources like this:
 
 ```puppet
-ebs::volume { 'jenkins':             # so we look for an EBS volume that has name:jenkins tag set
-  device         => '/dev/sdj',      # /dev/sdb by default
-  format         => 'ext3',          # ext3 by default
-  format_options => '-L jenkins',    # this will be passed to mkfs.ext3 AS IS, string format
-  mount_dir      => '/mnt/jenkins',  # /mnt by default
-  mount_options  => 'nodev, noatime' # single string, fstab format, 'noatime' by default
+ebs::volume { 'jenkins':              # so we look for an EBS volume that has name:jenkins tag set
+  device          => '/dev/sdz',      # it is safer to begin with sdz and go backwards alphabetically
+  device_attached => '/dev/xvdad'     # hard to guess -- see http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html
+  format          => 'ext4',          # ext3 by default
+  format_options  => '-L jenkins',    # this will be passed to mkfs.ext3 AS IS, string format
+  mount_dir       => '/mnt/jenkins',  # /mnt by default
+  mount_options   => 'nodev, noatime' # single string, fstab format, 'noatime' by default
 }
 ```
 
@@ -91,14 +92,3 @@ Example policy (tune Resource parameter to your liking):
     ]
 }
 ```
-
-## Bugs
-I've discovered a bug on my CentOS 6.x system: when you format a volume
-as an ext4 filesystem, it appears to lsblk as ext3 on a next volume attachment. This
-causes puppet to FORMAT an already formetted partition (as it thinks that the configuration
-is wrong -- we want an 'ext4' from it but it sees 'ext3').
-
-For the time being, 'ext3' will be set as the default filesystem parameter to avoid
-hitting this bug accidentally. At the same time, I encourage you to test your ebs::volume
-resources on test machines with subsequent re-attaches (e.g. by terminating an instance and
-reusing the volume on another one) BEFORE going to production.

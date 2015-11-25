@@ -1,9 +1,10 @@
 define ebs::volume (
-  $device         = '/dev/sdb',
-  $format         = 'ext3',
-  $format_options = undef,
-  $mount_options  = 'noatime',
-  $mount_dir      = '/mnt'
+  $device          = '/dev/sdz',
+  $device_attached = '/dev/xvdad',
+  $format          = 'ext3',
+  $format_options  = undef,
+  $mount_options   = 'noatime',
+  $mount_dir       = '/mnt'
 ) {
 
   require ebs
@@ -12,18 +13,8 @@ define ebs::volume (
     path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin'
   }
 
-  validate_re($device, '^/dev/sd[b-z]$')
-
   $volume_id_file = "/var/lib/puppet/.ebs__${name}__volume_id"
   $aws_region = inline_template("<%= @ec2_placement_availability_zone.gsub(/.$/,'') %>")
-
-  $_root_offset_device = inline_template("<%= @blockdevices.split(',').sort.first.gsub(/[0-9]/,'')[-1].ord %>")
-  $_offset_device = inline_template("<%= @device[-1].ord - 'a'[0].ord %>")
-  $_letter_xen_bd = inline_template("<%= (@_root_offset_device.to_i + @_offset_device.to_i).chr %>")
-
-  $device_attached = $::operatingsystem? {
-    default => inline_template("<%= '/dev/xvd' << @_letter_xen_bd %>")
-  }
 
   exec { "EBS volume ${name}: obtaining the volume id":
     command     => "aws ec2 describe-volumes --filters Name='tag:name',Values=${name} --query 'Volumes[*].{ID:VolumeId, State:State}' | grep 'ID' | cut -d':' -f 2 | tr -d ' \"' > ${volume_id_file}",
@@ -36,7 +27,7 @@ define ebs::volume (
   } ->
 
   exec { "EBS volume ${name}: attaching the volume":
-    command     => "aws ec2 attach-volume --volume-id=`cat ${volume_id_file}` --instance-id $ec2_instance_id --device $device",
+    command     => "aws ec2 attach-volume --volume-id `cat ${volume_id_file}` --instance-id $ec2_instance_id --device $device",
     environment => "AWS_DEFAULT_REGION=${aws_region}",
     unless      => "test -b ${device_attached}",
   } ->

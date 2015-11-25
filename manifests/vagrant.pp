@@ -1,5 +1,5 @@
 ebs::volume { 'vagrant_test':
-  format    => 'ext3',
+  format    => 'ext4',
   mount_dir => '/mnt/ebs_vagrant_test'
 } ->
 
