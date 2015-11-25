@@ -36,7 +36,8 @@ Vagrant.configure(2) do |config|
     aws.keypair_name             = ENV['AWS_KEYPAIR']
     aws.ami                      = ENV['AWS_AMI']
     aws.associate_public_ip      = true
-    aws.instance_type            = 't2.micro'
+    aws.instance_type            = 'm3.xlarge'
+    # aws.instance_type            = 't2.micro'
     aws.subnet_id                = ENV['AWS_SUBNET_ID']
     aws.security_groups          = ENV['AWS_SECURITY_GROUPS'].split.to_a  # ssh, egress
     aws.iam_instance_profile_arn = ENV['AWS_IAM_PROFILE']
