@@ -70,7 +70,7 @@ be reformatted and you will lose your data.
 
 ## Limitations
 
-This module was tested on CentOS 6.x so far. For the AWS API authorization to work,
+This module was tested on CentOS 6.x and Ubuntu so far. For the AWS API authorization to work,
 you have to assign a proper IAM role to an ec2 instance you're running this code on.
 Example policy (tune Resource parameter to your liking):
 
