@@ -14,7 +14,7 @@ define ebs::volume (
   }
 
   $volume_id_file = "${puppet_vardir}/.ebs__${name}__volume_id"
-  $aws_region = inline_template("<%= @ec2_placement_availability_zone&.gsub(/.$/,'') %>")
+  $aws_region = $facts['ec2_metadata']['placement']['region']
 
   exec { "EBS volume ${name}: obtaining the volume id":
     command     => "aws ec2 describe-volumes --filters Name='tag:name',Values=${name} --query 'Volumes[*].{ID:VolumeId, State:State}' | grep 'ID' | cut -d':' -f 2 | tr -d ' \"' > ${volume_id_file}",
