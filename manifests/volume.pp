@@ -13,7 +13,7 @@ define ebs::volume (
     path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin'
   }
 
-  $volume_id_file = "/var/lib/puppet/.ebs__${name}__volume_id"
+  $volume_id_file = "${puppet_vardir}/.ebs__${name}__volume_id"
   $aws_region = inline_template("<%= @ec2_placement_availability_zone.gsub(/.$/,'') %>")
 
   exec { "EBS volume ${name}: obtaining the volume id":
