@@ -15,9 +15,10 @@ define ebs::volume (
 
   $volume_id_file = "${puppet_vardir}/.ebs__${name}__volume_id"
   $aws_region = $facts['ec2_metadata']['placement']['region']
+  $ec2_instance_id =  $facts['ec2_metadata']['instance-id']
 
   exec { "EBS volume ${name}: obtaining the volume id":
-    command     => "aws ec2 describe-volumes --filters Name='tag:name',Values=${name} --query 'Volumes[*].{ID:VolumeId, State:State}' | grep 'ID' | cut -d':' -f 2 | tr -d ' \"' > ${volume_id_file}",
+    command     => "aws ec2 describe-volumes --filters Name='tag:Name',Values=${name} --query 'Volumes[*].{ID:VolumeId, State:State}' | grep 'ID' | cut -d':' -f 2 | tr -d ' \",' > ${volume_id_file}",
     unless      => "test -s ${volume_id_file}",
     environment => "AWS_DEFAULT_REGION=${aws_region}"
   } ->
