@@ -24,7 +24,9 @@ define ebs::volume (
   } ->
 
   exec { "EBS volume ${name}: volume id sanity check":
-    command => "[ `wc -l ${volume_id_file} | awk '{print \$1}'` -eq 1 ]"
+    command => "[ `wc -l ${volume_id_file} | awk '{print \$1}'` -eq 1 ]",
+    refreshonly => true,
+    subscribe   => Exec["EBS volume ${name}: obtaining the volume id"],
   } ->
 
   exec { "EBS volume ${name}: attaching the volume":
@@ -37,7 +39,9 @@ define ebs::volume (
     command   => "lsblk -fn ${device_attached}",
     tries     => 6,
     try_sleep => 10,
-    logoutput => true
+    logoutput => true,
+    refreshonly => true,
+    subscribe   => Exec["EBS volume ${name}: attaching the volume"],
   } ->
 
   exec { "EBS volume ${name}: formatting the volume":
