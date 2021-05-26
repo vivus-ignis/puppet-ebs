@@ -36,10 +36,10 @@ define ebs::volume (
   } ->
 
   exec { "EBS volume ${name}: waiting for the volume to be attached":
-    command   => "lsblk -fn ${device_attached}",
-    tries     => 6,
-    try_sleep => 10,
-    logoutput => true,
+    command     => "lsblk -fn ${device_attached}",
+    tries       => 6,
+    try_sleep   => 10,
+    logoutput   => true,
     refreshonly => true,
     subscribe   => Exec["EBS volume ${name}: attaching the volume"],
   } ->
