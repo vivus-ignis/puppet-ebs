@@ -13,17 +13,20 @@ define ebs::volume (
     path => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin'
   }
 
-  $volume_id_file = "/var/lib/puppet/.ebs__${name}__volume_id"
-  $aws_region = inline_template("<%= @ec2_placement_availability_zone.gsub(/.$/,'') %>")
+  $volume_id_file = "${puppet_vardir}/.ebs__${name}__volume_id"
+  $aws_region = $facts['ec2_metadata']['placement']['region']
+  $ec2_instance_id =  $facts['ec2_metadata']['instance-id']
 
   exec { "EBS volume ${name}: obtaining the volume id":
-    command     => "aws ec2 describe-volumes --filters Name='tag:name',Values=${name} --query 'Volumes[*].{ID:VolumeId, State:State}' | grep 'ID' | cut -d':' -f 2 | tr -d ' \"' > ${volume_id_file}",
+    command     => "aws ec2 describe-volumes --filters Name='tag:Name',Values=${name} --query 'Volumes[*].{ID:VolumeId, State:State}' | grep 'ID' | cut -d':' -f 2 | tr -d ' \",' > ${volume_id_file}",
     unless      => "test -s ${volume_id_file}",
     environment => "AWS_DEFAULT_REGION=${aws_region}"
   } ->
 
   exec { "EBS volume ${name}: volume id sanity check":
-    command => "[ `wc -l ${volume_id_file} | awk '{print \$1}'` -eq 1 ]"
+    command => "[ `wc -l ${volume_id_file} | awk '{print \$1}'` -eq 1 ]",
+    refreshonly => true,
+    subscribe   => Exec["EBS volume ${name}: obtaining the volume id"],
   } ->
 
   exec { "EBS volume ${name}: attaching the volume":
@@ -33,10 +36,12 @@ define ebs::volume (
   } ->
 
   exec { "EBS volume ${name}: waiting for the volume to be attached":
-    command   => "lsblk -fn ${device_attached}",
-    tries     => 6,
-    try_sleep => 10,
-    logoutput => true
+    command     => "lsblk -fn ${device_attached}",
+    tries       => 6,
+    try_sleep   => 10,
+    logoutput   => true,
+    refreshonly => true,
+    subscribe   => Exec["EBS volume ${name}: attaching the volume"],
   } ->
 
   exec { "EBS volume ${name}: formatting the volume":
